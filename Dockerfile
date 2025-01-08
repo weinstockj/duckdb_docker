@@ -1,11 +1,18 @@
 FROM ubuntu:22.04
 
 # Update package lists
-RUN apt-get update && apt-get upgrade -y && apt-get install -y wget unzip
+ARG DUCKDB_VERSION=v1.1.3
+ARG DUCKDB_ARCH=amd64
 
-RUN wget https://github.com/duckdb/duckdb/releases/download/v0.10.0/duckdb_cli-linux-amd64.zip -O duckdb.zip
+RUN apt-get update && apt-get install -y \
+    unzip curl
 
-RUN unzip duckdb.zip && cp duckdb /usr/local/bin/duckdb && rm duckdb.zip
+RUN curl -L -o duckdb_cli.zip "https://github.com/duckdb/duckdb/releases/download/${DUCKDB_VERSION}/duckdb_cli-linux-${DUCKDB_ARCH}.zip" \
+    && unzip duckdb_cli.zip \
+    && rm duckdb_cli.zip
+
+RUN mv duckdb /usr/local/bin/duckdb 
+ENV SHELL=/bin/bash
 
 CMD ["/bin/bash"]
 
